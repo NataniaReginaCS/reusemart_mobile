@@ -15,11 +15,14 @@ class MainApp extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: Colors.white,
           scaffoldBackgroundColor: Colors.white,
+        
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.white,
+          
           ),
         ),
         home: AnimatedSplashScreen(
