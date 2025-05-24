@@ -367,6 +367,20 @@ class _LoginState extends State<Login> {
               MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           }
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: AwesomeSnackbarContent(
+                title: 'Failed',
+                message: 'Email or Password is incorrect',
+                contentType: ContentType.failure,
+              ),
+              duration: Duration(seconds: 2),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+            ),
+          );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
