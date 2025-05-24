@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:reusemart_mobile/HunterPage/HunterHome.dart';
 import 'package:reusemart_mobile/KurirPage/KurirHome.dart';
-import 'package:reusemart_mobile/client/ApiService.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/mainMenu.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
@@ -11,7 +10,6 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'reusemart_channel',
@@ -35,9 +33,7 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final ApiService _apiService = ApiService();
   bool _isLoading = false;
-  Map? dataForm;
 
   void _toggleVisibility() {
     setState(() {
@@ -59,105 +55,119 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  // Future<void> _login() async {
-  //   if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: AwesomeSnackbarContent(
-  //           title: 'Warning',
-  //           message: 'Please fill all the fields',
-  //           contentType: ContentType.warning,
-  //         ),
-  //         duration: const Duration(seconds: 2),
-  //         elevation: 0,
-  //         behavior: SnackBarBehavior.floating,
-  //         backgroundColor: Colors.transparent,
-  //       ),
-  //     );
-  //     return;
-  //   }
+  void _login() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
 
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
+      try {
+        var response = await AuthClient.login(
+            _emailController.text, _passwordController.text);
+        if (response.statusCode == 200) {
+          var data = jsonDecode(response.body);
+          final user = data['user'];
+          String role = data['role'];
+          int? id;
 
-  //   try {
-  //     final response = await _apiService.login(
-  //       _emailController.text,
-  //       _passwordController.text,
-  //     );
-  //     await _apiService.saveToken(response['token']);
+          if (role == 'Penitip') {
+            id = user['id_penitip'];
+          } else if (role == 'Kurir' || role == 'Hunter') {
+            id = user['id_pegawai'];
+          } else if (role == 'Pembeli') {
+            id = user['id_pembeli'];
+          }
+          data['id'] = id;
 
-  //     FirebaseMessaging messaging = FirebaseMessaging.instance;
-  //     String? fcmToken = await messaging.getToken();
-  //     print("FCM Token: $fcmToken");
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', data['token']);
 
-  //     if (fcmToken != null) {
-  //       await http.post(
-  //         Uri.parse('http://10.0.2.2:8000/api/send-welcome-notification'),
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': 'Bearer ${response['token']}',
-  //         },
-  //         body: jsonEncode({
-  //           'fcm_token': fcmToken,
-  //           'title': 'Selamat Datang!',
-  //           'body': 'Anda berhasil login ke ReUseMart.',
-  //         }),
-  //       );
-  //       await flutterLocalNotificationsPlugin.show(
-  //         0,
-  //         'Selamat Datang!',
-  //         'Anda berhasil login ke ReUseMart.',
-  //         NotificationDetails(
-  //           android: AndroidNotificationDetails(
-  //             channel.id,
-  //             channel.name,
-  //             channelDescription: channel.description,
-  //             importance: Importance.max,
-  //             priority: Priority.high,
-  //           ),
-  //         ),
-  //       );
-  //     }
+          FirebaseMessaging messaging = FirebaseMessaging.instance;
+          String? fcmToken = await messaging.getToken();
+          print("FCM Token: $fcmToken");
 
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: AwesomeSnackbarContent(
-  //           title: 'Success',
-  //           message: 'Login Successful',
-  //           contentType: ContentType.success,
-  //         ),
-  //         duration: const Duration(seconds: 2),
-  //         elevation: 0,
-  //         behavior: SnackBarBehavior.floating,
-  //         backgroundColor: Colors.transparent,
-  //       ),
-  //     );
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => const HomePage()),
-  //     );
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: AwesomeSnackbarContent(
-  //           title: 'Error',
-  //           message: e.toString(),
-  //           contentType: ContentType.failure,
-  //         ),
-  //         duration: const Duration(seconds: 2),
-  //         elevation: 0,
-  //         behavior: SnackBarBehavior.floating,
-  //         backgroundColor: Colors.transparent,
-  //       ),
-  //     );
-  //   } finally {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
+          if (fcmToken != null) {
+            await http
+                .post(
+              Uri.parse('http://10.0.2.2:8000/api/update-fcm-token'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ${data['token']}',
+              },
+              body: jsonEncode({
+                'id': data['id'],
+                'user_type': data['role'],
+                'fcm_token': fcmToken,
+              }),
+            )
+                .then((response) {
+              if (response.statusCode == 200) {
+                print("FCM token updated successfully");
+              } else {
+                print("Response body: ${response.body}");
+              }
+            }).catchError((error) {
+              print("Error updating FCM token: $error");
+            });
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: AwesomeSnackbarContent(
+                title: 'Success',
+                message: 'Login Successful',
+                contentType: ContentType.success,
+              ),
+              duration: Duration(seconds: 2),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+            ),
+          );
+
+          if (data['role'] == 'Pembeli') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          } else if (data['role'] == 'Kurir') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => KurirHome()),
+            );
+          } else if (data['role'] == 'Hunter') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HunterHome()),
+            );
+          } else if (data['role'] == 'Penitip') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Mainmenu()),
+            );
+          }
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: AwesomeSnackbarContent(
+              title: 'Error',
+              message: 'Login Failed: $e',
+              contentType: ContentType.failure,
+            ),
+            duration: Duration(seconds: 2),
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +227,6 @@ class _LoginState extends State<Login> {
                       validator: (value) {
                         if (value == null || value.isEmpty)
                           return 'Password tidak boleh kosong';
-
                         return null;
                       },
                       obscureText: _isHidden,
@@ -324,65 +333,5 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
-  }
-
-  void _login() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        var response = await AuthClient.login(
-            _emailController.text, _passwordController.text);
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: AwesomeSnackbarContent(
-                title: 'Success',
-                message: 'Login Successful',
-                contentType: ContentType.success,
-              ),
-              duration: Duration(seconds: 2),
-              elevation: 0,
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.transparent,
-            ),
-          );
-          var data = jsonDecode(response.body);
-          if (data['role'] == 'Pembeli') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          } else if (data['role'] == 'Kurir') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => KurirHome()),
-            );
-          } else if (data['role'] == 'Hunter') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HunterHome()),
-            );
-          } else if (data['role'] == 'Penitip') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Mainmenu()),
-            );
-          }
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: AwesomeSnackbarContent(
-              title: 'Error',
-              message: 'Login Failed',
-              contentType: ContentType.failure,
-            ),
-            duration: Duration(seconds: 2),
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-          ),
-        );
-      }
-    }
   }
 }
