@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
-import 'package:reusemart_mobile/client/AuthPembeli.dart';
-import 'package:reusemart_mobile/entity/Pembeli.dart';
+import 'package:reusemart_mobile/client/AuthPenitip.dart';
+import 'package:reusemart_mobile/entity/Penitip.dart';
 import 'package:reusemart_mobile/homepage/mainMenu.dart';
-import 'package:reusemart_mobile/merchandise/isimerc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfilePembeli extends StatefulWidget {
-  const ProfilePembeli({super.key});
+class ProfilePenitip extends StatefulWidget {
+  const ProfilePenitip({super.key});
 
   @override
-  _ProfilePembeliState createState() => _ProfilePembeliState();
+  _ProfilePenitipState createState() => _ProfilePenitipState();
 }
 
-class _ProfilePembeliState extends State<ProfilePembeli> {
+class _ProfilePenitipState extends State<ProfilePenitip> {
   Future<void> _logout() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      print("Token: $token");
+
       if (token != null) {
         await AuthClient.logout(token);
 
         await prefs.remove('token');
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const Mainmenu()),
@@ -39,12 +39,12 @@ class _ProfilePembeliState extends State<ProfilePembeli> {
     }
   }
 
-  late Future<Pembeli> _currentUser;
+  late Future<Penitip> _currentUser;
 
   @override
   void initState() {
     super.initState();
-    _currentUser = AuthPembeli.fetchCurrentUser();
+    _currentUser = AuthPenitip.fetchCurrentUser();
   }
 
   @override
@@ -71,7 +71,7 @@ class _ProfilePembeliState extends State<ProfilePembeli> {
           )
         ],
       ),
-      body: FutureBuilder<Pembeli>(
+      body: FutureBuilder<Penitip>(
         future: _currentUser,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -85,70 +85,60 @@ class _ProfilePembeliState extends State<ProfilePembeli> {
           final user = snapshot.data!;
           return SingleChildScrollView(
             child: Container(
-              margin: EdgeInsets.only(top: 40, left: 20, right: 20),
+              margin: EdgeInsets.only(top: 20, left: 20, right: 20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 10, left: 20, right: 30),
-                        child: CircleAvatar(
-                          radius: 50,
-                          backgroundImage: user.foto.isNotEmpty
-                              ? NetworkImage(user.foto)
-                              : AssetImage('images/cin.png'),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 40),
-                        child: Text(
-                          user.nama,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   Container(
-                    margin: EdgeInsets.only(top: 40, left: 20),
+                    margin: EdgeInsets.only(top: 40),
+                    alignment: Alignment.center,
                     child: Text(
-                      'Deskripsi',
+                      user.nama,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 10, left: 20, right: 20),
+                    margin: EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Poin yang dimiliki :',
+                          'Rating : ',
                           style: TextStyle(
                             fontSize: 15,
                           ),
                         ),
-                        Text(
-                          user.poin.toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                          ),
+                        Row(
+                          children: [
+                            for (int i = 1; i <= 5; i++)
+                              Icon(
+                                i <= (user.total_rating ?? 0).floor()
+                                    ? Icons.star
+                                    : ((i - (user.total_rating ?? 0)) == 0.5
+                                        ? Icons.star_half
+                                        : Icons.star_border),
+                                color: Colors.amber,
+                                size: 20,
+                              ),
+                            SizedBox(width: 6),
+                            Text(
+                              user.total_rating?.toStringAsFixed(0) ?? '0',
+                              style: TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(
-                        top: 10, left: 20, right: 20, bottom: 20),
+                    margin: EdgeInsets.only(top: 10, left: 20, right: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -167,51 +157,105 @@ class _ProfilePembeliState extends State<ProfilePembeli> {
                       ],
                     ),
                   ),
+                  Container(
+                    margin: EdgeInsets.only(top: 10, left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Wallet : ',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          user.wallet.toStringAsFixed(0),
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: 10, left: 20, right: 20, bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Poin yang dimiliki :',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          user.poin.toString(),
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Divider(
                     color: Color(0xFFF5CB58),
                     thickness: 1,
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 15, left: 20),
-                    child: Text(
-                      'Klaim Merchandise',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 15, left: 20),
-                    child: Text(
-                      'Tukarkan poin dengan merchandise',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => katalogmerchandise(),
+                  ...(user.badges
+                      ? [
+                          Container(
+                            margin: EdgeInsets.only(top: 15, left: 20),
+                            width: double.infinity,
+                            height: 60,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFFEFFB1),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF1F510F),
-                          minimumSize: Size(25, 30),
-                        ),
-                        child: Text('Tukar',
-                            style:
-                                TextStyle(fontSize: 15, color: Colors.white)),
-                      ),
-                    ],
-                  ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            child: Text(
+                              'Top Seller',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 20, left: 20),
+                            child: Text(
+                              'Keuntungan',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 20, right: 20, bottom: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Diskon Komisi Sebesar : ',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Text(
+                                  "1%",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ]
+                      : []),
                   Divider(
                     color: Color(0xFFF5CB58),
                     thickness: 1,

@@ -3,42 +3,43 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:reusemart_mobile/entity/Pembeli.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthClient {
+class AuthPembeli {
   static final String url = 'http://10.0.2.2:8000/api';
   static final String endpoint = '';
 
-  static Future<Response> login(String email, String password) async {
+  static Future<Pembeli> fetchCurrentUser() async {
     try {
-      final response = await post(
-        Uri.parse('$url/loginMobile'),
+      String token = await SharedPreferences.getInstance()
+          .then((prefs) => prefs.getString('token') ?? '');
+      final response = await get(
+        Uri.parse('$url/fetchPembeli'),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
       );
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', data['token']);
+        await prefs.setString('current_user', jsonEncode(data));
+        return Pembeli.fromJson(data);
+      } else {
+        throw Exception('Failed to fetch user: ${response.reasonPhrase}');
       }
-
-      return response;
     } catch (e) {
-      print('Error: $e');
-      return Response('Error: $e', 500);
+      print('Error fetching user: $e');
+      throw Exception('Error fetching user: $e');
     }
   }
 
   static Future<void> logout(String token) async {
     try {
       var response = await post(
-        Uri.parse('$url/logout'),
+        Uri.https(url, '/api/logout'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
