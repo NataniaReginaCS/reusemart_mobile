@@ -7,7 +7,7 @@ class Pembeli {
   String password;
   String telepon;
   int poin;
-  String? foto;
+  String foto;
 
   Pembeli({
     required this.id_pembeli,
@@ -16,7 +16,7 @@ class Pembeli {
     required this.password,
     required this.telepon,
     required this.poin,
-    this.foto,
+    required this.foto,
   });
 
   factory Pembeli.fromRawJson(String str) => Pembeli.fromJson(json.decode(str));
@@ -28,7 +28,9 @@ class Pembeli {
       password: json["password"],
       telepon: json["telepon"],
       poin: json["poin"],
-      foto: json["foto"],
+      foto: json['foto'] != null && json['foto'].isNotEmpty
+          ? 'http://10.0.2.2:8000/${json['foto']}'
+          : '',
     );
   }
 

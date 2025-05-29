@@ -82,6 +82,8 @@ class _LoginState extends State<Login> {
 
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', data['token']);
+          await prefs.setString('role', data['role']);
+          await prefs.setInt('id', data['id']);
 
           FirebaseMessaging messaging = FirebaseMessaging.instance;
           String? fcmToken = await messaging.getToken();
@@ -129,7 +131,7 @@ class _LoginState extends State<Login> {
           if (data['role'] == 'Pembeli') {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           } else if (data['role'] == 'Kurir') {
             Navigator.pushReplacement(
