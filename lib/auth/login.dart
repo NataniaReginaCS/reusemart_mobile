@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:reusemart_mobile/HunterPage/HunterHome.dart';
+import 'package:reusemart_mobile/KurirPage/ProfileKurir.dart';
 import 'package:reusemart_mobile/KurirPage/KurirHome.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/mainMenu.dart';
@@ -135,7 +136,7 @@ class _LoginState extends State<Login> {
           } else if (data['role'] == 'Kurir') {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => KurirHome()),
+              MaterialPageRoute(builder: (context) => ProfileKurir()),
             );
           } else if (data['role'] == 'Hunter') {
             Navigator.pushReplacement(

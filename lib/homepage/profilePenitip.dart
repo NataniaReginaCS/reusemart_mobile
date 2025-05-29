@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reusemart_mobile/auth/login.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
 import 'package:reusemart_mobile/client/AuthPenitip.dart';
 import 'package:reusemart_mobile/entity/Penitip.dart';
@@ -25,7 +26,7 @@ class _ProfilePenitipState extends State<ProfilePenitip> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const Mainmenu()),
+          MaterialPageRoute(builder: (_) => const Login()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

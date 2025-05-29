@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/History/Pembelian.dart';
+import 'package:reusemart_mobile/History/Penitipan.dart';
 import 'package:reusemart_mobile/auth/login.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/profilePembeli.dart';
@@ -49,7 +50,7 @@ class _MainmenuState extends State<Mainmenu> {
       if (_role == 'Pembeli')
         HistoryPembelian()
       else if (_role == 'Penitip')
-        ProfilePenitip()
+        HistoryPenitipan(id: _id!)
       else if (_role == 'Kurir')
         ProfilePenitip()
       else if (_role == 'Hunter')
