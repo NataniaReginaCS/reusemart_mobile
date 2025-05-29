@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class Penitip {
+  int id_penitip;
   String nama;
   String email;
   String password;
@@ -13,6 +14,7 @@ class Penitip {
   double? total_rating;
 
   Penitip({
+    required this.id_penitip,
     required this.nama,
     required this.email,
     required this.password,
@@ -28,6 +30,7 @@ class Penitip {
   factory Penitip.fromRawJson(String str) => Penitip.fromJson(json.decode(str));
 
   factory Penitip.fromJson(Map<String, dynamic> json) => Penitip(
+        id_penitip: json["id_penitip"] ?? 0,
         nama: json["nama"] ?? '',
         email: json["email"] ?? '',
         password: json["password"] ?? '',
@@ -47,6 +50,7 @@ class Penitip {
   String toRawJson() => json.encode(toJson());
 
   Map<String, dynamic> toJson() => {
+        "id_penitip": id_penitip,
         "nama": nama,
         "email": email,
         "password": password,
