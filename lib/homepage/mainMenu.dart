@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:reusemart_mobile/History/Pembelian.dart';
+import 'package:reusemart_mobile/auth/login.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/profilePembeli.dart';
+import 'package:reusemart_mobile/homepage/profilePenitip.dart';
 import 'package:reusemart_mobile/homepage/historyPPH.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Mainmenu extends StatefulWidget {
   final int? id;
@@ -14,11 +18,14 @@ class Mainmenu extends StatefulWidget {
 
 class _MainmenuState extends State<Mainmenu> {
   int _selectedIndex = 0;
+  String? _role;
+  int? _id;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedIndex;
+    _loadRole();
   }
 
   void _onItemTapped(int index) {
@@ -27,12 +34,38 @@ class _MainmenuState extends State<Mainmenu> {
     });
   }
 
+  Future<void> _loadRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _role = prefs.getString('role');
+      _id = prefs.getInt('id');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> _widgetOptions = <Widget>[
       HomePage(),
-      HistoryPPH(),
-      ProfilePembeli(),
+      if (_role == 'Pembeli')
+        HistoryPembelian()
+      else if (_role == 'Penitip')
+        ProfilePenitip()
+      else if (_role == 'Kurir')
+        ProfilePenitip()
+      else if (_role == 'Hunter')
+        HistoryPPH()
+      else
+        Login(),
+      if (_role == 'Pembeli')
+        ProfilePembeli()
+      else if (_role == 'Penitip')
+        ProfilePenitip()
+      else if (_role == 'Kurir')
+        ProfilePenitip()
+      else if (_role == 'Hunter')
+        ProfilePenitip()
+      else
+        Login()
     ];
 
     return Scaffold(

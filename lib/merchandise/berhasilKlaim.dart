@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/homepage/mainMenu.dart';
-import 'package:reusemart_mobile/homepage/profilePembeli.dart';
+import 'package:reusemart_mobile/homepage/profilePenitip.dart';
 
 class BerhasilKlaim extends StatefulWidget {
   @override

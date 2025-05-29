@@ -80,10 +80,8 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
-        
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
-          
         ),
       ),
       home: AnimatedSplashScreen(
