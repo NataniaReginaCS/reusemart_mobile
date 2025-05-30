@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:reusemart_mobile/History/DetailPembelian.dart';
 import 'package:reusemart_mobile/client/AuthPembelian.dart';
 import 'package:reusemart_mobile/entity/DetailPembelian.dart';
-import 'package:reusemart_mobile/merchandise/isimerc.dart';
+import 'package:intl/intl.dart';
 
 class HistoryPembelian extends StatefulWidget {
   const HistoryPembelian({Key? key}) : super(key: key);
@@ -12,12 +13,94 @@ class HistoryPembelian extends StatefulWidget {
 
 class _HistoryPembelianState extends State<HistoryPembelian> {
   late Future<List<DetailPembelian>> _pembelian;
+  List<DetailPembelian> pembelianList = [];
+  List<DetailPembelian> filteredpembelianList = [];
+  final TextEditingController _searchController = TextEditingController();
+  DateTime? startDate;
+  DateTime? endDate;
 
   @override
   void initState() {
     super.initState();
     _pembelian = AuthPembelian.getPembelian();
-    print(_pembelian);
+    _pembelian.then((value) {
+      setState(() {
+        pembelianList = value;
+        filteredpembelianList = value;
+        _onSearchChanged();
+      });
+    });
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      filteredpembelianList = pembelianList.where((item) {
+        final tanggalLaku = item.pembelian.tanggal_laku;
+        final matchesQuery = item.pembelian.nomor_nota
+                .toLowerCase()
+                .toString()
+                .contains(query) ||
+            item.pembelian.tanggal_laku.toLocal().toString().contains(query) ||
+            item.pembelian.status_pengiriman.toLowerCase().contains(query) ||
+            item.pembelian.metode_pengiriman.toLowerCase().contains(query);
+
+        bool matchesDate = true;
+        if (startDate != null) {
+          matchesDate = matchesDate && !tanggalLaku.isBefore(startDate!);
+        }
+        if (endDate != null) {
+          matchesDate = matchesDate && !tanggalLaku.isAfter(endDate!);
+        }
+
+        return matchesQuery && matchesDate;
+      }).toList();
+    });
+  }
+
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: startDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != startDate) {
+      setState(() {
+        startDate = picked;
+        _onSearchChanged();
+      });
+    }
+  }
+
+  Future<void> _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: endDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != endDate) {
+      setState(() {
+        endDate = picked;
+        _onSearchChanged();
+      });
+    }
+  }
+
+  void _clearDateFilters() {
+    setState(() {
+      startDate = null;
+      endDate = null;
+      _onSearchChanged();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,6 +156,7 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                   border: Border.all(color: Color(0xFFe0e0e0)),
                 ),
                 child: TextField(
+                  controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Cari Riwayat Pembelian',
                     hintStyle:
@@ -82,6 +166,67 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                     focusedBorder: InputBorder.none,
                     contentPadding: EdgeInsets.all(10),
                   ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => _selectStartDate(context),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xFFe0e0e0)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xFFF0F0F0),
+                          ),
+                          child: Text(
+                            startDate == null
+                                ? 'Tanggal Mulai'
+                                : DateFormat('dd/MM/yyyy').format(startDate!),
+                            style: TextStyle(
+                              color: startDate == null
+                                  ? Color(0xFFBDBDBD)
+                                  : Colors.black,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => _selectEndDate(context),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xFFe0e0e0)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xFFF0F0F0),
+                          ),
+                          child: Text(
+                            endDate == null
+                                ? 'Tanggal Selesai'
+                                : DateFormat('dd/MM/yyyy').format(endDate!),
+                            style: TextStyle(
+                              color: endDate == null
+                                  ? Color(0xFFBDBDBD)
+                                  : Colors.black,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.clear, color: Color(0xFF1F510F)),
+                      onPressed: _clearDateFilters,
+                    ),
+                  ],
                 ),
               ),
               FutureBuilder<List<DetailPembelian>>(
@@ -95,13 +240,12 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: Text('Tidak ada riwayat pembelian.'));
                   } else {
-                    final pembelianList = snapshot.data!;
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: pembelianList.length,
+                      itemCount: filteredpembelianList.length,
                       itemBuilder: (context, index) {
-                        final item = pembelianList[index];
+                        final item = filteredpembelianList[index];
                         return Card(
                           color: Color(0xFFF0F0F0),
                           margin: EdgeInsets.symmetric(
@@ -112,25 +256,24 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                           child: ListTile(
                             leading: Icon(Icons.shopping_bag,
                                 color: Color(0xFF1F510F)),
-                            title: Text(
-                                "Order No.${item.pembelian.id_pembelian}",
+                            title: Text("Order No.${item.pembelian.nomor_nota}",
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                    'Tanggal: ${item.pembelian.tanggal_laku.toLocal().toString().split(' ')[0]}',
+                                    'Tanggal Pesan: ${item.pembelian.tanggal_laku.toLocal().toString().split(' ')[0]}',
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 12)),
+                                        color: Colors.grey, fontSize: 15)),
                                 Text(
                                     'Status: ${item.pembelian.status_pengiriman}',
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 12)),
+                                        color: Colors.grey, fontSize: 15)),
                                 Text(
                                     'Metode Pengiriman: ${item.pembelian.metode_pengiriman}',
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 12)),
+                                        color: Colors.grey, fontSize: 15)),
                               ],
                             ),
                             trailing: Column(
@@ -142,6 +285,7 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                                   style: TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 SizedBox(height: 5),
@@ -154,7 +298,9 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              katalogmerchandise(),
+                                              DetailPembelianPage(
+                                            id: item.pembelian.id_pembelian,
+                                          ),
                                         ),
                                       );
                                     },
@@ -168,7 +314,7 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                                     child: Text(
                                       'Detail',
                                       style: TextStyle(
-                                          fontSize: 12, color: Colors.white),
+                                          fontSize: 14, color: Colors.white),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
