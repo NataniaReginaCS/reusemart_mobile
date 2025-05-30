@@ -8,7 +8,7 @@ class Pegawai{
   String password;
   DateTime tanggal_masuk;
   DateTime tanggal_lahir;
-  double? wallet;
+  double wallet;
 
   Pegawai({
     required this.id_pegawai,
@@ -18,7 +18,7 @@ class Pegawai{
     required this.password,
     required this.tanggal_masuk,
     required this.tanggal_lahir,
-    this.wallet,
+    required this.wallet,
   });
 
   factory Pegawai.fromRawJson(String str) => Pegawai.fromJson(json.decode(str));
@@ -31,7 +31,7 @@ class Pegawai{
       password: json["password"],
       tanggal_masuk: DateTime.parse(json["tanggal_masuk"]),
       tanggal_lahir: DateTime.parse(json["tanggal_lahir"]), 
-      wallet: json["wallet"],
+      wallet: (json['wallet'] as num).toDouble(),
     );
   }
 
