@@ -36,4 +36,26 @@ class AuthPenitipan {
     final List<dynamic> jsonList = json.decode(response.body)['data'];
     return jsonList.map((json) => Penitipan.fromJson(json)).toList();
   }
+
+  static Future<void> updateBarangLebihTujuhHari() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token == null) {
+      throw Exception('Token tidak ditemukan');
+    }
+
+    final response = await get(
+      Uri.parse('$url/updateStatusBarangDonasi'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
+
+    print(response.body);
+    if (response.statusCode != 200) {
+      throw Exception('Gagal memperbarui barang lebih dari tujuh hari');
+    }
+  }
 }

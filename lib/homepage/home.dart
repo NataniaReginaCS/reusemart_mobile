@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reusemart_mobile/client/AuthPenitip.dart';
+import 'package:reusemart_mobile/client/AuthPenitipan.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -10,6 +12,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
   String _search = '';
+  late Future<List<Map<String, dynamic>>> _getTopSellers;
+
+  @override
+  void initState() {
+    super.initState();
+    _getTopSellers = AuthPenitip.getTopSeller();
+    AuthPenitipan.updateBarangLebihTujuhHari();
+  }
 
   final List<Map<String, dynamic>> categories = [
     {'icon': Icons.checkroom, 'label': 'Pakaian'},
@@ -66,24 +76,195 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 margin: EdgeInsets.only(bottom: 15),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Divider(
-                        color: Colors.black,
-                        endIndent: 20,
-                        indent: 10,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            color: Colors.black,
+                            endIndent: 20,
+                            indent: 10,
+                          ),
+                        ),
+                        Text(
+                          "Papan Peringkat Top Seller",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            color: Colors.black,
+                            endIndent: 20,
+                            indent: 10,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Kategori Barang",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    SizedBox(height: 10),
+                    FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _getTopSellers,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Text('Gagal memuat data');
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            color: Colors.grey.shade100,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 24, horizontal: 16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.hourglass_empty,
+                                    color: Colors.grey.shade600,
+                                    size: 40,
+                                  ),
+                                  SizedBox(height: 12),
+                                  Text(
+                                    'Belum Ada Top Seller',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.grey.shade800,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Tunggu hingga penjual terbaik muncul di leaderboard!',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        final sellers = snapshot.data!;
+                        final seller = sellers.first;
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          color: Colors.amber.shade200,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.amber.shade300,
+                                  Colors.amber.shade100
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.amber.shade700,
+                                width: 2,
+                              ),
+                            ),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              leading: Icon(
+                                Icons.star,
+                                color: Colors.amber.shade900,
+                                size: 36,
+                              ),
+                              title: Text(
+                                seller['nama'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.black87,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              subtitle: Text(
+                                '#1 Leaderboard',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              trailing: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.shade700,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.amber.shade900
+                                          .withOpacity(0.3),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                    color: Colors.amber.shade900,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Top Seller',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    Expanded(
-                      child: Divider(
-                        color: Colors.black,
-                        endIndent: 20,
-                        indent: 10,
+                    Container(
+                      margin: EdgeInsets.only(top: 15, bottom: 15),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: Colors.black,
+                              endIndent: 20,
+                              indent: 10,
+                            ),
+                          ),
+                          Text(
+                            "Kategori Barang",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.black,
+                              endIndent: 20,
+                              indent: 10,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
