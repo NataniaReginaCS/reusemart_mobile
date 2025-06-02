@@ -107,7 +107,7 @@ class _LoginState extends State<Login> {
               if (response.statusCode == 200) {
                 print("FCM token updated successfully");
               } else {
-                print("Response body: ${response.body}");
+                print("Failed to update FCM token: ${response.body}");
               }
             }).catchError((error) {
               print("Error updating FCM token: $error");
@@ -136,7 +136,7 @@ class _LoginState extends State<Login> {
           } else if (data['role'] == 'Kurir') {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ProfileKurir()),
+              MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           } else if (data['role'] == 'Hunter') {
             Navigator.pushReplacement(
@@ -149,6 +149,20 @@ class _LoginState extends State<Login> {
               MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           }
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: AwesomeSnackbarContent(
+                title: 'Login Failed',
+                message: 'Email or Password is incorrect',
+                contentType: ContentType.failure,
+              ),
+              duration: Duration(seconds: 2),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+            ),
+          );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

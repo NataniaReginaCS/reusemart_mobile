@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:reusemart_mobile/client/KurirClient.dart';
+import 'package:reusemart_mobile/entity/JadwalPengiriman.dart';
+import 'package:intl/intl.dart';
 
 class PengirimanKurir extends StatefulWidget {
   const PengirimanKurir({Key? key}) : super(key: key);
@@ -8,6 +11,20 @@ class PengirimanKurir extends StatefulWidget {
 }
 
 class _PengirimanKurirState extends State<PengirimanKurir> {
+  late Future<List<JadwalPengiriman>> _jadwalPengiriman;
+  List<JadwalPengiriman> jadwalList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _jadwalPengiriman = KurirClient.getJadwalPengirimanKurir();
+    _jadwalPengiriman.then((value) {
+      setState(() {
+        jadwalList = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,16 +33,14 @@ class _PengirimanKurirState extends State<PengirimanKurir> {
           surfaceTintColor: Colors.transparent,
           title: Text('Pengiriman',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-                color: Colors.white
-              )),
-              centerTitle: true,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  color: Colors.white)),
+          centerTitle: true,
           leading: Padding(
             padding: const EdgeInsets.only(left: 30.0),
             child: IconButton(
-              
-              icon : Icon(Icons.arrow_back_ios, color: Colors.white),
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -37,12 +52,13 @@ class _PengirimanKurirState extends State<PengirimanKurir> {
           decoration: BoxDecoration(
             color: Colors.green[900],
           ),
-          child: Container( 
+          child: Container(
             margin: EdgeInsets.only(top: 20),
             width: double.infinity,
-            decoration : BoxDecoration(
+            decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(topLeft:  Radius.circular(30), topRight: Radius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -67,77 +83,106 @@ class _PengirimanKurirState extends State<PengirimanKurir> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 15, left: 20, right: 20),
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.only(bottom: 5),
-                                        child: Text(
-                                          "Nama Pembeli",
-                                          style: TextStyle(fontSize: 17),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(bottom: 5),
-                                        child: Text(
-                                          "Jalan Tambak Bayan",
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      Text(
-                                        "17 Januari 2025 18:00:00",
-                                        style: TextStyle(
-                                            fontSize: 17,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                  child: FutureBuilder<List<JadwalPengiriman>>(
+                      future: _jadwalPengiriman,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child:
+                                  Text('Terjadi kesalahan: ${snapshot.error}'));
+                        } else if (!snapshot.hasData) {
+                          return const Center(
+                              child: Text('Data tidak ditemukan.'));
+                        }
+
+                        final detail = snapshot.data!;
+                        return ListView.builder(
+                          itemCount: detail.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.only(
+                                  bottom: 15, left: 20, right: 20),
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(30),
+                                    Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Text(
+                                                "${detail[index].nama_pembeli}",
+                                                style: TextStyle(fontSize: 17),
+                                              ),
+                                            ),
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Text(
+                                                "${detail[index].nama_jalan}",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            Text(
+                                              "${DateFormat('dd MMMM yyyy').format(detail[index].tanggal_pengiriman)}",
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        minimumSize: Size(80, 30),
-                                        backgroundColor: Colors.green[900],
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {},
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                              ),
+                                              minimumSize: Size(80, 30),
+                                              backgroundColor:
+                                                  Colors.green[900],
+                                            ),
+                                            child: Text("Selesai",
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          ),
+                                        ],
                                       ),
-                                      child: Text("Selesai",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    Divider(
+                                      color: Color.fromARGB(255, 245, 203, 88),
                                     ),
                                   ],
                                 ),
                               ),
-                              Divider(
-                                color: Color.fromARGB(255, 245, 203, 88),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                            );
+                          },
+                        );
+                      }),
                 ),
               ],
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/History/Pembelian.dart';
 import 'package:reusemart_mobile/History/Penitipan.dart';
+import 'package:reusemart_mobile/KurirPage/HistoryKurir.dart';
+import 'package:reusemart_mobile/KurirPage/ProfileKurir.dart';
 import 'package:reusemart_mobile/auth/login.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/profilePembeli.dart';
@@ -52,7 +54,7 @@ class _MainmenuState extends State<Mainmenu> {
       else if (_role == 'Penitip')
         HistoryPenitipan(id: _id!)
       else if (_role == 'Kurir')
-        ProfilePenitip()
+        Historykurir()
       else if (_role == 'Hunter')
         HistoryPPH()
       else
@@ -62,7 +64,7 @@ class _MainmenuState extends State<Mainmenu> {
       else if (_role == 'Penitip')
         ProfilePenitip()
       else if (_role == 'Kurir')
-        ProfilePenitip()
+        ProfileKurir()
       else if (_role == 'Hunter')
         ProfilePenitip()
       else

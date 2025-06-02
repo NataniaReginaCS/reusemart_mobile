@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:reusemart_mobile/entity/JadwalPengiriman.dart';
 import 'package:reusemart_mobile/entity/Pegawai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,6 +36,36 @@ class KurirClient {
       }
     } catch (e) {
       throw Exception('Error fetching kurir: $e');
+    }
+  }
+
+  static Future<List<JadwalPengiriman>> getJadwalPengirimanKurir() async {
+    try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      if (token == null || token.isEmpty) {
+        throw Exception('No authentication token found.');
+      }
+      final response = await get(
+        Uri.parse('$url/jadwalPengirimanKurir'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        await prefs.setString('jadwal_pengiriman', jsonEncode(data['jadwal']));
+        print(data['jadwal']);
+        final List<dynamic> jsonList = json.decode(response.body)['jadwal'];
+        return jsonList.map((json) => JadwalPengiriman.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to fetch jadwal pengiriman: ${response.reasonPhrase}');
+      }
+      
+    }catch (e) {
+      throw Exception('Error fetching jadwal pengiriman: $e');
     }
   }
 
