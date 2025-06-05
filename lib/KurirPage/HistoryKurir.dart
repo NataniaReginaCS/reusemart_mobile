@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:reusemart_mobile/client/KurirClient.dart';
+import 'package:reusemart_mobile/entity/JadwalPengiriman.dart';
+import 'package:intl/intl.dart';
 
 class Historykurir extends StatefulWidget {
   const Historykurir({super.key});
@@ -8,6 +11,20 @@ class Historykurir extends StatefulWidget {
 }
 
 class _HistorykurirState extends State<Historykurir> {
+  late Future<List<JadwalPengiriman>> _historyPengiriman;
+  List<JadwalPengiriman> jadwalList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _historyPengiriman = KurirClient.getHistoryPengirimanKurir();
+    _historyPengiriman.then((value) {
+      setState(() {
+        jadwalList = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,68 +69,86 @@ class _HistorykurirState extends State<Historykurir> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 15, left: 20, right: 20),
-                      child: Container(
-                      
-                        
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width - 40,
-                                  
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                  
+                child: FutureBuilder(
+                    future: _historyPengiriman,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                            child:
+                                Text('Terjadi kesalahan: ${snapshot.error}'));
+                      } else if (!snapshot.hasData) {
+                        return const Center(
+                            child: Text('Data tidak ditemukan.'));
+                      }
+
+                      final detail = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: detail.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: EdgeInsets.only(
+                                bottom: 15, left: 20, right: 20),
+                            child: Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
                                     children: [
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          "17 Januari 2025 18:00:00",
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            
-                                          ),
-                                          textAlign: TextAlign.right,
-                                        ),
-                                      ),
                                       Container(
-                                        margin: EdgeInsets.only(bottom: 5),
-                                        child: Text(
-                                          "Nama Pembeli",
-                                          style: TextStyle(fontSize: 17),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(bottom: 5),
-                                        child: Text(
-                                          "Jalan Tambak Bayan",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                40,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                "${DateFormat('dd MMMM yyyy').format(detail[index].tanggal_pengiriman)}",
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                ),
+                                                textAlign: TextAlign.right,
+                                              ),
+                                            ),
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Text(
+                                                "${detail[index].nama_pembeli}",
+                                                style: TextStyle(fontSize: 17),
+                                              ),
+                                            ),
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Text(
+                                                "${detail[index].nama_jalan}",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                  Divider(
+                                    color: Colors.black45,
+                                  ),
+                                ],
+                              ),
                             ),
-                            Divider(
-                              color: Colors.black45,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          );
+                        },
+                      );
+                    }),
               ),
             ],
           ),

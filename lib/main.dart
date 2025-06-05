@@ -60,7 +60,7 @@ void main() async {
       );
     }
   });
-
+  
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     print("Opened from notification: ${message.notification?.title}");
   });
@@ -127,7 +127,7 @@ class MainApp extends StatelessWidget {
           ],
         ),
         splashIconSize: 500,
-        nextScreen: const Login(),
+        nextScreen:  Mainmenu(),
         splashTransition: SplashTransition.fadeTransition,
         backgroundColor: const Color(0xFF1F510F),
       ),

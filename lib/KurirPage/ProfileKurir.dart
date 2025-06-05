@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/KurirPage/PengirimanKurir.dart';
+import 'package:reusemart_mobile/auth/login.dart';
+import 'package:reusemart_mobile/client/AuthClient.dart';
 import 'package:reusemart_mobile/client/KurirClient.dart';
 import 'package:reusemart_mobile/entity/Pegawai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +14,30 @@ class ProfileKurir extends StatefulWidget {
 }
 
 class _ProfileKurirState extends State<ProfileKurir> {
+  Future<void> _logout() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      print("Token: $token");
+      if (token != null) {
+        await AuthClient.logout(token);
+
+        await prefs.remove('token');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Login()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Token tidak ditemukan. Harap login kembali.")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Terjadi kesalahan saat logout: $e")));
+    }
+  }
   late Future<Pegawai> _currentKurir;
 
   @override
@@ -33,7 +59,7 @@ class _ProfileKurirState extends State<ProfileKurir> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              Navigator.pop(context);
+              _logout();
             },
           ),
         ],
@@ -137,7 +163,7 @@ class _ProfileKurirState extends State<ProfileKurir> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => PengirimanKurir()),

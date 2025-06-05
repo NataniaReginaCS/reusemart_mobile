@@ -69,5 +69,38 @@ class KurirClient {
     }
   }
 
+  static Future<List<JadwalPengiriman>> getHistoryPengirimanKurir() async {
+    try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      if (token == null || token.isEmpty) {
+        throw Exception('No authentication token found.');
+      }
+      final response = await get(
+        Uri.parse('$url/historyPengirimanKurir'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-}
+        print(response.body);
+        if (response.statusCode == 200) { 
+          var data = jsonDecode(response.body);
+          await prefs.setString('jadwal_pengiriman', jsonEncode(data['jadwal']));
+          print(data['jadwal']);
+          final List<dynamic> jsonList = json.decode(response.body)['jadwal'];
+          return jsonList.map((json) => JadwalPengiriman.fromJson(json)).toList();
+        } else {
+          throw Exception('Failed to fetch jadwal pengiriman: ${response.reasonPhrase}');
+        }
+        
+      }catch (e) {
+        throw Exception('Error fetching jadwal pengiriman: $e');
+      }
+    }
+
+    
+
+
+  }
