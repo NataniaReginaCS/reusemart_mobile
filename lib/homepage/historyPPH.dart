@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HistoryPPH extends StatefulWidget {
-  const HistoryPPH({Key? key}) : super(key: key);
+  const HistoryPPH({super.key});
 
   @override
   _HistoryPPHState createState() => _HistoryPPHState();

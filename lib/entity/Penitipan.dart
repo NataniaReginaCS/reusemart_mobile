@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:reusemart_mobile/entity/Barang.dart';
 
 class Penitipan {

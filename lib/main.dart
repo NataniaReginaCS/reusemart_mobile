@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:reusemart_mobile/auth/login.dart';
-import 'package:reusemart_mobile/homepage/mainMenu.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();

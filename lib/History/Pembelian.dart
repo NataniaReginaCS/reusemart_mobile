@@ -5,7 +5,7 @@ import 'package:reusemart_mobile/entity/DetailPembelian.dart';
 import 'package:intl/intl.dart';
 
 class HistoryPembelian extends StatefulWidget {
-  const HistoryPembelian({Key? key}) : super(key: key);
+  const HistoryPembelian({super.key});
 
   @override
   _HistoryPembelianState createState() => _HistoryPembelianState();

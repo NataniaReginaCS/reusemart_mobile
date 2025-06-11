@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/History/Pembelian.dart';
 import 'package:reusemart_mobile/History/Penitipan.dart';
 import 'package:reusemart_mobile/auth/login.dart';
+import 'package:reusemart_mobile/homepage/Merchandise.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/profilePembeli.dart';
 import 'package:reusemart_mobile/homepage/profilePenitip.dart';
 import 'package:reusemart_mobile/homepage/historyPPH.dart';
+import 'package:reusemart_mobile/HunterPage/ProfileHunter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Mainmenu extends StatefulWidget {
@@ -45,7 +47,7 @@ class _MainmenuState extends State<Mainmenu> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _widgetOptions = <Widget>[
+    final List<Widget> widgetOptions = <Widget>[
       HomePage(),
       if (_role == 'Pembeli')
         HistoryPembelian()
@@ -64,7 +66,7 @@ class _MainmenuState extends State<Mainmenu> {
       else if (_role == 'Kurir')
         ProfilePenitip()
       else if (_role == 'Hunter')
-        ProfilePenitip()
+        Profilehunter(id: _id!)
       else
         Login()
     ];
@@ -101,7 +103,7 @@ class _MainmenuState extends State<Mainmenu> {
           unselectedItemColor: Color(0xFF8D92A3),
         ),
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: widgetOptions.elementAt(_selectedIndex),
     );
   }
 }

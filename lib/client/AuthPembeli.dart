@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:reusemart_mobile/entity/Pembeli.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
