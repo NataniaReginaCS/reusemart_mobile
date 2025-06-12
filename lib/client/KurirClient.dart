@@ -46,7 +46,7 @@ class KurirClient {
       if (token == null || token.isEmpty) {
         throw Exception('No authentication token found.');
       }
-      final response = await get(
+      final response = await get( 
         Uri.parse('$url/jadwalPengirimanKurir'),
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,30 @@ class KurirClient {
         throw Exception('Error fetching jadwal pengiriman: $e');
       }
     }
+    static Future<void> selesaikanStatusPengiriman(int idPembelian) async{
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? token = prefs.getString('token');
+        if (token == null || token.isEmpty) {
+          throw Exception('No authentication token found.');
+        }
+        final response = await post(
+          Uri.parse('$url/selesaikanPengirimanKurir/$idPembelian'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
 
+        if (response.statusCode == 200) {
+          print('Status pengiriman berhasil diselesaikan');
+        } else {
+          throw Exception('Failed to update status pengiriman: ${response.reasonPhrase}');
+        }
+      } catch (e) {
+        throw Exception('Error updating status pengiriman: $e');
+      }
+    }
     
 
 

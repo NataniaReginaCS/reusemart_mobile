@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/client/KurirClient.dart';
 import 'package:reusemart_mobile/entity/JadwalPengiriman.dart';
@@ -63,24 +64,27 @@ class _PengirimanKurirState extends State<PengirimanKurir> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  margin:
-                      EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 35),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xFFF0F0F0),
-                      border: Border.all(color: Color(0xFFe0e0e0))),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Cari',
-                      hintStyle:
-                          TextStyle(color: Color(0xFFBDBDBD), fontSize: 15),
-                      prefixIcon: Icon(Icons.search, color: Color(0xFFBDBDBD)),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.all(10),
-                    ),
-                  ),
+                // Container(
+                //   margin:
+                //       EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 35),
+                //   decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(10),
+                //       color: Color(0xFFF0F0F0),
+                //       border: Border.all(color: Color(0xFFe0e0e0))),
+                //   child: TextField(
+                //     decoration: InputDecoration(
+                //       hintText: 'Cari',
+                //       hintStyle:
+                //           TextStyle(color: Color(0xFFBDBDBD), fontSize: 15),
+                //       prefixIcon: Icon(Icons.search, color: Color(0xFFBDBDBD)),
+                //       enabledBorder: InputBorder.none,
+                //       focusedBorder: InputBorder.none,
+                //       contentPadding: EdgeInsets.all(10),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(
+                  height: 50,
                 ),
                 Expanded(
                   child: FutureBuilder<List<JadwalPengiriman>>(
@@ -153,7 +157,10 @@ class _PengirimanKurirState extends State<PengirimanKurir> {
                                             MainAxisAlignment.end,
                                         children: [
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              _acceptModal(
+                                                  context, detail[index].id_pembelian, detail[index].nomor_nota);
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -188,5 +195,86 @@ class _PengirimanKurirState extends State<PengirimanKurir> {
             ),
           ),
         ));
+  }
+
+  Future<void> _acceptModal(BuildContext context, int id, String nota) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+            backgroundColor: Colors.white,
+          title: const Text('Selesaikan Pengiriman'),
+          content: Text(
+            'Apakah anda yakin ingin menyelesaikan pengiriman untuk nomor nota : $nota',
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                textStyle: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              child: const Text('Batal'),
+              onPressed: () {
+                
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.green[900],
+                foregroundColor: Colors.white,
+                textStyle: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              child: const Text('Selesaikan'),
+              onPressed: () {
+                selesaikanPengiriman(id);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> selesaikanPengiriman(int idPembelian) async {
+    try {
+      await KurirClient.selesaikanStatusPengiriman(idPembelian);
+      setState(() {
+        _jadwalPengiriman = KurirClient.getJadwalPengirimanKurir();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: AwesomeSnackbarContent(
+                title: 'Success',
+                message: 'Berhasil menyelesaikan pengiriman',
+                contentType: ContentType.success,
+              ),
+              duration: Duration(seconds: 2),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+            ),
+          );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: AwesomeSnackbarContent(
+                title: 'Failed',
+                message: 'Gagal menyelesaikan pengiriman',
+                contentType: ContentType.success,
+              ),
+              duration: Duration(seconds: 2),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+            ),
+          );
+    }
   }
 }
