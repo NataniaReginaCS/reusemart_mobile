@@ -3,7 +3,6 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:reusemart_mobile/HunterPage/HunterHome.dart';
 import 'package:reusemart_mobile/HunterPage/ProfileHunter.dart';
 import 'package:reusemart_mobile/KurirPage/ProfileKurir.dart';
-import 'package:reusemart_mobile/KurirPage/KurirHome.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/mainMenu.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
@@ -138,7 +137,7 @@ class _LoginState extends State<Login> {
           } else if (data['role'] == 'Kurir') {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ProfileKurir()),
+              MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           } else if (data['role'] == 'Hunter') {
             Navigator.pushReplacement(
@@ -151,6 +150,20 @@ class _LoginState extends State<Login> {
               MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           }
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: AwesomeSnackbarContent(
+                title: 'Login Failed',
+                message: 'Email or Password is incorrect',
+                contentType: ContentType.failure,
+              ),
+              duration: Duration(seconds: 2),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+            ),
+          );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
