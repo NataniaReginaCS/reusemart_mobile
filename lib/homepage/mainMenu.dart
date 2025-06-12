@@ -4,10 +4,12 @@ import 'package:reusemart_mobile/History/Penitipan.dart';
 import 'package:reusemart_mobile/KurirPage/HistoryKurir.dart';
 import 'package:reusemart_mobile/KurirPage/ProfileKurir.dart';
 import 'package:reusemart_mobile/auth/login.dart';
+import 'package:reusemart_mobile/homepage/Merchandise.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/profilePembeli.dart';
 import 'package:reusemart_mobile/homepage/profilePenitip.dart';
 import 'package:reusemart_mobile/homepage/historyPPH.dart';
+import 'package:reusemart_mobile/HunterPage/ProfileHunter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Mainmenu extends StatefulWidget {
@@ -116,7 +118,7 @@ class _MainmenuState extends State<Mainmenu> {
           unselectedItemColor: Color(0xFF8D92A3),
         ),
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: widgetOptions.elementAt(_selectedIndex),
     );
   }
 }

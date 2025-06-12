@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:reusemart_mobile/entity/Penitip.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +11,7 @@ class AuthPenitip {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      if (token == null || token.isEmpty) {
+      if (token!.isEmpty) {
         throw Exception('No authentication token found.');
       }
       final response = await get(
@@ -64,7 +61,7 @@ class AuthPenitip {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      if (token == null || token.isEmpty) {
+      if (token!.isEmpty) {
         throw Exception('No authentication token found.');
       }
       final response = await get(
