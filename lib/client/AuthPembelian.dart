@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:reusemart_mobile/entity/DetailPembelian.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,10 +10,6 @@ class AuthPembelian {
   static Future<List<DetailPembelian>> getPembelian() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-
-    if (token == null) {
-      throw Exception('Token tidak ditemukan');
-    }
 
     final response = await get(
       Uri.parse('$url/order-history'),
@@ -40,10 +33,6 @@ class AuthPembelian {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
-    if (token == null) {
-      throw Exception('Token tidak ditemukan');
-    }
-
     final response = await get(
       Uri.parse('$url/order-history/$id'),
       headers: {
@@ -65,10 +54,6 @@ class AuthPembelian {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
-    if (token == null) {
-      throw Exception('Token tidak ditemukan');
-    }
-
     final response = await get(
       Uri.parse('$url/alamatUtama'),
       headers: {
@@ -89,9 +74,7 @@ class AuthPembelian {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? alamatData = prefs.getString('alamat_utama');
 
-    if (alamatData == null) return 'Alamat belum tersedia';
-
-    var decoded = jsonDecode(alamatData);
+    var decoded = jsonDecode(alamatData!);
     var alamatUtama = decoded['alamatUtama'];
     return '${alamatUtama['nama_jalan']}, ${alamatUtama['nama_kota']} (${alamatUtama['kode_pos']})';
   }

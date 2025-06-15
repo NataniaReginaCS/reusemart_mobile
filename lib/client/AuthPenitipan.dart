@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:reusemart_mobile/entity/Penitipan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,10 +10,6 @@ class AuthPenitipan {
   static Future<List<Penitipan>> getPenitipan(int id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-
-    if (token == null) {
-      throw Exception('Token tidak ditemukan');
-    }
 
     final response = await get(
       Uri.parse('$url/getHistoryPenitipan/$id'),
@@ -40,10 +33,6 @@ class AuthPenitipan {
   static Future<void> updateBarangLebihTujuhHari() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-
-    if (token == null) {
-      throw Exception('Token tidak ditemukan');
-    }
 
     final response = await get(
       Uri.parse('$url/updateStatusBarangDonasi'),

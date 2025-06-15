@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/client/AuthPenitip.dart';
 import 'package:reusemart_mobile/client/AuthPenitipan.dart';
+import 'package:reusemart_mobile/entity/Barang.dart';
+import 'package:reusemart_mobile/client/AuthBarang.dart';
+import 'package:reusemart_mobile/homepage/detailBarang.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -11,14 +14,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
-  String _search = '';
+  final String _search = '';
   late Future<List<Map<String, dynamic>>> _getTopSellers;
-
+  late Future<List<Barang>> _barang;
+  List<Barang> barangList = [];
   @override
   void initState() {
     super.initState();
     _getTopSellers = AuthPenitip.getTopSeller();
     AuthPenitipan.updateBarangLebihTujuhHari();
+    _barang = Authbarang.getBarang();
   }
 
   final List<Map<String, dynamic>> categories = [
@@ -346,46 +351,82 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.width > 600 ? 4 : 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 0.9,
-                ),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 10, right: 10),
-                        height: 150,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(10),
+              FutureBuilder<List<Barang>>(
+                future: Authbarang
+                    .getBarang(), // Replace with your own future variable if needed
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('Tidak ada barang tersedia.'));
+                  }
+
+                  final barangList = snapshot.data!;
+
+                  return GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: barangList.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount:
+                          MediaQuery.of(context).size.width > 600 ? 4 : 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 0.9,
+                    ),
+                    itemBuilder: (context, index) {
+                      final barang = barangList[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Detailbarang(
+                                id: barang.id_barang,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              height: 150,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  image: NetworkImage(barang.foto),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 13, top: 10),
+                              child: Text(
+                                barang.nama,
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                left: 13,
+                              ),
+                              child:
+                                  Text('Rp ${barang.harga.toStringAsFixed(0)}'),
+                            ),
+                          ],
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: 13, top: 10),
-                        child: Text(
-                          'Nama Barang',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: 13, top: 3),
-                        child: Text('Harga Barang'),
-                      ),
-                    ],
+                      );
+                    },
                   );
                 },
-              ),
+              )
             ],
           ),
         ),

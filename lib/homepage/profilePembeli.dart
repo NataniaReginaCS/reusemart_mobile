@@ -3,7 +3,6 @@ import 'package:reusemart_mobile/auth/login.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
 import 'package:reusemart_mobile/client/AuthPembeli.dart';
 import 'package:reusemart_mobile/entity/Pembeli.dart';
-import 'package:reusemart_mobile/homepage/mainMenu.dart';
 import 'package:reusemart_mobile/merchandise/isimerc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,20 +19,13 @@ class _ProfilePembeliState extends State<ProfilePembeli> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       print("Token: $token");
-      if (token != null) {
-        await AuthClient.logout(token);
+      await AuthClient.logout(token!);
 
-        await prefs.remove('token');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Login()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text("Token tidak ditemukan. Harap login kembali.")),
-        );
-      }
+      await prefs.remove('token');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Terjadi kesalahan saat logout: $e")));
@@ -261,7 +253,7 @@ class _ProfilePembeliState extends State<ProfilePembeli> {
                     children: [
                       ElevatedButton(
                         onPressed: () {},
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(   
                           backgroundColor: Color(0xFF9A282A),
                           minimumSize: Size(25, 30),
                         ),

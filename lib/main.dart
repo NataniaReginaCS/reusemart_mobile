@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:reusemart_mobile/auth/login.dart';
-import 'package:reusemart_mobile/homepage/mainMenu.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -60,7 +59,7 @@ void main() async {
       );
     }
   });
-
+  
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     print("Opened from notification: ${message.notification?.title}");
   });
@@ -127,7 +126,7 @@ class MainApp extends StatelessWidget {
           ],
         ),
         splashIconSize: 500,
-        nextScreen: const Login(),
+        nextScreen:  Mainmenu(),
         splashTransition: SplashTransition.fadeTransition,
         backgroundColor: const Color(0xFF1F510F),
       ),

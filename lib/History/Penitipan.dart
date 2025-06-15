@@ -4,7 +4,7 @@ import 'package:reusemart_mobile/entity/Penitipan.dart';
 
 class HistoryPenitipan extends StatefulWidget {
   final int id;
-  const HistoryPenitipan({Key? key, required this.id}) : super(key: key);
+  const HistoryPenitipan({super.key, required this.id});
 
   @override
   _HistoryPenitipanState createState() => _HistoryPenitipanState();

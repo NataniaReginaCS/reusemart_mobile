@@ -3,6 +3,8 @@ import 'package:reusemart_mobile/homepage/mainMenu.dart';
 import 'package:reusemart_mobile/homepage/profilePenitip.dart';
 
 class BerhasilKlaim extends StatefulWidget {
+  const BerhasilKlaim({super.key});
+
   @override
   _BerhasilKlaimState createState() => _BerhasilKlaimState();
 }

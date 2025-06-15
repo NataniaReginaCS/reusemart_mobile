@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:reusemart_mobile/History/Pembelian.dart';
 import 'package:reusemart_mobile/History/Penitipan.dart';
+import 'package:reusemart_mobile/KurirPage/HistoryKurir.dart';
+import 'package:reusemart_mobile/KurirPage/ProfileKurir.dart';
 import 'package:reusemart_mobile/auth/login.dart';
+import 'package:reusemart_mobile/homepage/Merchandise.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/profilePembeli.dart';
 import 'package:reusemart_mobile/homepage/profilePenitip.dart';
 import 'package:reusemart_mobile/homepage/historyPPH.dart';
+import 'package:reusemart_mobile/HunterPage/ProfileHunter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Mainmenu extends StatefulWidget {
@@ -21,6 +25,8 @@ class _MainmenuState extends State<Mainmenu> {
   int _selectedIndex = 0;
   String? _role;
   int? _id;
+  String? _token;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -40,33 +46,44 @@ class _MainmenuState extends State<Mainmenu> {
     setState(() {
       _role = prefs.getString('role');
       _id = prefs.getInt('id');
+      _token = prefs.getString('token');
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final List<Widget> _widgetOptions = <Widget>[
       HomePage(),
-      if (_role == 'Pembeli')
-        HistoryPembelian()
-      else if (_role == 'Penitip')
-        HistoryPenitipan(id: _id!)
-      else if (_role == 'Kurir')
-        ProfilePenitip()
-      else if (_role == 'Hunter')
-        HistoryPPH()
-      else
-        Login(),
-      if (_role == 'Pembeli')
-        ProfilePembeli()
-      else if (_role == 'Penitip')
-        ProfilePenitip()
-      else if (_role == 'Kurir')
-        ProfilePenitip()
-      else if (_role == 'Hunter')
-        ProfilePenitip()
-      else
-        Login()
+      _token != null
+          ? (_role == 'Pembeli'
+              ? HistoryPembelian()
+              : _role == 'Penitip'
+                  ? HistoryPenitipan(id: _id!)
+                  : _role == 'Kurir'
+                      ? Historykurir()
+                      : _role == 'Hunter'
+                          ? HistoryPPH()
+                          : Login())
+          : Login(),
+
+      _token != null
+          ? (_role == 'Pembeli'
+              ? ProfilePembeli()
+              : _role == 'Penitip'
+                  ? ProfilePenitip()
+                  : _role == 'Kurir'
+                      ? ProfileKurir()
+                      : _role == 'Hunter'
+                          ? ProfilePenitip()
+                          : Login())
+          : Login(),
     ];
 
     return Scaffold(
@@ -101,7 +118,7 @@ class _MainmenuState extends State<Mainmenu> {
           unselectedItemColor: Color(0xFF8D92A3),
         ),
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: widgetOptions.elementAt(_selectedIndex),
     );
   }
 }

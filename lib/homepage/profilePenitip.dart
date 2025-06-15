@@ -3,7 +3,6 @@ import 'package:reusemart_mobile/auth/login.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
 import 'package:reusemart_mobile/client/AuthPenitip.dart';
 import 'package:reusemart_mobile/entity/Penitip.dart';
-import 'package:reusemart_mobile/homepage/mainMenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePenitip extends StatefulWidget {
@@ -28,21 +27,14 @@ class _ProfilePenitipState extends State<ProfilePenitip> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
-      if (token != null) {
-        await AuthClient.logout(token);
+      await AuthClient.logout(token!);
 
-        await prefs.remove('token');
+      await prefs.remove('token');
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Login()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text("Token tidak ditemukan. Harap login kembali.")),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Terjadi kesalahan saat logout: $e")));

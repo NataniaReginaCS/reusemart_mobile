@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthClient {
@@ -21,7 +18,7 @@ class AuthClient {
           'password': password,
         }),
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();

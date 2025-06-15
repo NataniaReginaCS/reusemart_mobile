@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:reusemart_mobile/HunterPage/HunterHome.dart';
+import 'package:reusemart_mobile/HunterPage/ProfileHunter.dart';
 import 'package:reusemart_mobile/KurirPage/ProfileKurir.dart';
-import 'package:reusemart_mobile/KurirPage/KurirHome.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/mainMenu.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
@@ -23,7 +23,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -88,31 +88,32 @@ class _LoginState extends State<Login> {
           FirebaseMessaging messaging = FirebaseMessaging.instance;
           String? fcmToken = await messaging.getToken();
           print("FCM Token: $fcmToken");
+          print(
+              "Updating FCM token for user ID: ${data['id']} and role: ${data['role']}");
 
-          if (fcmToken != null) {
-            await http
-                .post(
-              Uri.parse('http://10.0.2.2:8000/api/update-fcm-token'),
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ${data['token']}',
-              },
-              body: jsonEncode({
-                'id': data['id'],
-                'user_type': data['role'],
-                'fcm_token': fcmToken,
-              }),
-            )
-                .then((response) {
-              if (response.statusCode == 200) {
-                print("FCM token updated successfully");
-              } else {
-                print("Response body: ${response.body}");
-              }
-            }).catchError((error) {
-              print("Error updating FCM token: $error");
-            });
-          }
+          await http
+              .post(
+            Uri.parse('http://10.0.2.2:8000/api/update-fcm-token'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ${data['token']}',
+            },
+            body: jsonEncode({
+              'id': data['id'],
+              'user_type': data['role'],
+              'fcm_token': fcmToken,
+            }),
+          )
+              .then((response) {
+            print(response.statusCode);
+            if (response.statusCode == 200) {
+              print("FCM token updated successfully");
+            } else {
+              print("Response body: ${response.body}");
+            }
+          }).catchError((error) {
+            print("Error updating FCM token: $error");
+          });
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -136,12 +137,12 @@ class _LoginState extends State<Login> {
           } else if (data['role'] == 'Kurir') {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ProfileKurir()),
+              MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           } else if (data['role'] == 'Hunter') {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HunterHome()),
+              MaterialPageRoute(builder: (context) => Profilehunter(id: id!)),
             );
           } else if (data['role'] == 'Penitip') {
             Navigator.pushReplacement(
@@ -149,6 +150,20 @@ class _LoginState extends State<Login> {
               MaterialPageRoute(builder: (context) => Mainmenu()),
             );
           }
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: AwesomeSnackbarContent(
+                title: 'Login Failed',
+                message: 'Email or Password is incorrect',
+                contentType: ContentType.failure,
+              ),
+              duration: Duration(seconds: 2),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+            ),
+          );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -199,8 +214,9 @@ class _LoginState extends State<Login> {
                     child: TextFormField(
                       controller: _emailController,
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Email tidak boleh kosong';
+                        }
                         if (!value.contains('@')) return 'Email tidak valid';
                         return null;
                       },
@@ -228,8 +244,9 @@ class _LoginState extends State<Login> {
                     child: TextFormField(
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Password tidak boleh kosong';
+                        }
                         return null;
                       },
                       obscureText: _isHidden,
