@@ -167,10 +167,16 @@ class _HistoryPenitipanState extends State<HistoryPenitipan> {
                                           style: TextStyle(
                                               color: Colors.grey,
                                               fontSize: 12)),
-                                      Text(item.tanggal_masuk.toString(),
-                                          style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 13)),
+                                      Text(
+                                        (item.tanggal_masuk != null
+                                            ? item.tanggal_masuk
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]
+                                            : '-'),
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 13),
+                                      ),
                                     ],
                                   ),
                                   trailing: SizedBox(
@@ -244,6 +250,39 @@ class _HistoryPenitipanState extends State<HistoryPenitipan> {
                                                       "Garansi: ${barang.isGaransi ? 'Ya' : 'Tidak'}"),
                                                   Text(
                                                       "Berat: ${barang.berat} kg"),
+                                                  Text(
+                                                      "Status: ${barang.status_barang}"),
+                                                  Text(
+                                                      "Deskripsi: ${barang.deskripsi}"),
+                                                  Text(
+                                                      "Perpanjangan: ${barang.status_perpanjangan ? 'Ya' : 'Tidak'}"),
+                                                  Text(
+                                                    "Tanggal Akhir: ${barang.tanggal_akhir != null ? barang.tanggal_akhir?.toLocal().toString().split(' ')[0] : '-'}",
+                                                  ),
+                                                  Text(
+                                                    "Batas Ambil: ${barang.batas_ambil != null ? barang.batas_ambil?.toLocal().toString().split(' ')[0] : '-'}",
+                                                  ),
+                                                  Text(
+                                                    "Tanggal Garansi: ${barang.akhir_garansi != null ? barang.akhir_garansi?.toLocal().toString().split(' ')[0] : '-'}",
+                                                  ),
+                                                  Text(
+                                                    "Durasi Penitipan: ${barang.durasi_penitipan} hari",
+                                                  ),  
+                                                  Container(
+                                                    width: 100,
+                                                    height: 100,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      image: DecorationImage(
+                                                        image: NetworkImage(
+                                                            'http://10.0.2.2:8000/storage/${barang.foto}'),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
                                                   Divider(),
                                                 ],
                                               ),
