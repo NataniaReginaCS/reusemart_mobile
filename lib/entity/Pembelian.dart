@@ -8,6 +8,7 @@ class Pembelian {
   DateTime tanggal_laku;
   DateTime? tanggal_lunas;
   DateTime? tanggal_pengiriman;
+  DateTime? tanggal_selesai;
   double ongkir;
   String status_pengiriman;
   String status_pembayaran;
@@ -35,6 +36,7 @@ class Pembelian {
     required this.metode_pengiriman,
     required this.total,
     required this.nomor_nota,
+    required this.tanggal_selesai,
   });
 
   factory Pembelian.fromRawJson(String str) =>
@@ -66,6 +68,9 @@ class Pembelian {
       metode_pengiriman: json["metode_pengiriman"] ?? '',
       total: (json["total"] ?? 0).toDouble(),
       nomor_nota: json["nomor_nota"] ?? '',
+      tanggal_selesai: json["tanggal_selesai"] != null
+          ? DateTime.parse(json["tanggal_selesai"])
+          : null,
     );
   }
 
@@ -87,5 +92,6 @@ class Pembelian {
         "metode_pengiriman": metode_pengiriman,
         "total": total,
         "nomor_nota": nomor_nota,
+        "tanggal_selesai": tanggal_selesai,
       };
 }

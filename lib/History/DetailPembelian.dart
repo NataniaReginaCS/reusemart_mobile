@@ -168,6 +168,93 @@ class _DetailPembelianPageState extends State<DetailPembelianPage> {
                         height: 32,
                         color: Color(0xFFF5CB58),
                       ),
+                      const Text(
+                        'Tanggal',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Tanggal Laku',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            pembelian.tanggal_laku.day
+                                    .toString()
+                                    .padLeft(2, '0') +
+                                ' ${_getMonthName(pembelian.tanggal_laku.month)} ' +
+                                pembelian.tanggal_laku.year.toString(),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Tanggal Lunas',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            pembelian.tanggal_lunas != null
+                                ? '${pembelian.tanggal_lunas!.day.toString().padLeft(2, '0')} ${_getMonthName(pembelian.tanggal_lunas!.month)} ${pembelian.tanggal_lunas!.year}'
+                                : '-',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Tanggal Pengiriman',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            pembelian.tanggal_pengiriman != null
+                                ? '${pembelian.tanggal_pengiriman!.day.toString().padLeft(2, '0')} ${_getMonthName(pembelian.tanggal_pengiriman!.month)} ${pembelian.tanggal_pengiriman!.year}'
+                                : '-',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Tanggal Selesai',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            pembelian.tanggal_selesai != null
+                                ? '${pembelian.tanggal_selesai!.day.toString().padLeft(2, '0')} ${_getMonthName(pembelian.tanggal_selesai!.month)} ${pembelian.tanggal_selesai!.year}'
+                                : '-',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        height: 32,
+                        color: Color(0xFFF5CB58),
+                      ),
                       Text(
                         'Informasi Pembelian',
                         style: TextStyle(
@@ -265,6 +352,24 @@ class _DetailPembelianPageState extends State<DetailPembelianPage> {
                         color: Color(0xFFF5CB58),
                       ),
                       const Text(
+                        'Bukti Pembayaran',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Image.network(
+                        pembelian.bukti_pembayaran,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Divider(
+                        height: 32,
+                        color: Color(0xFFF5CB58),
+                      ),
+                      const Text(
                         'Biaya',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -327,6 +432,7 @@ class _DetailPembelianPageState extends State<DetailPembelianPage> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 16),
                     ],
                   ),
                 );

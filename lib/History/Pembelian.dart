@@ -38,6 +38,7 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
     setState(() {
       filteredpembelianList = pembelianList.where((item) {
         final tanggalLaku = item.pembelian.tanggal_laku;
+        final tanggalSelesai = item.pembelian.tanggal_selesai;
         final matchesQuery = item.pembelian.nomor_nota
                 .toLowerCase()
                 .toString()
@@ -51,7 +52,7 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
           matchesDate = matchesDate && !tanggalLaku.isBefore(startDate!);
         }
         if (endDate != null) {
-          matchesDate = matchesDate && !tanggalLaku.isAfter(endDate!);
+          matchesDate = matchesDate && !tanggalSelesai!.isAfter(endDate!);
         }
 
         return matchesQuery && matchesDate;
@@ -64,7 +65,7 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
       context: context,
       initialDate: startDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2700),
     );
     if (picked != null && picked != startDate) {
       setState(() {
@@ -79,7 +80,7 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
       context: context,
       initialDate: endDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2700),
     );
     if (picked != null && picked != endDate) {
       setState(() {
@@ -132,19 +133,20 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(top: 40),
-          width: screenWidth,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 255, 255, 255),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50),
-              topRight: Radius.circular(50),
-            ),
-            border: Border.all(color: Color(0xFFe0e0e0)),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        margin: EdgeInsets.only(top: 40),
+        padding: EdgeInsets.only(top: 20),
+        width: screenWidth,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 255, 255, 255),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
           ),
+          border: Border.all(color: Color(0xFFe0e0e0)),
+        ),
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
@@ -263,7 +265,11 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                    'Tanggal Pesan: ${item.pembelian.tanggal_laku.toLocal().toString().split(' ')[0]}',
+                                    'Tanggal Mulai: ${item.pembelian.tanggal_laku.toLocal().toString().split(' ')[0]}',
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 15)),
+                                Text(
+                                    'Tanggal Selesai: ${item.pembelian.tanggal_selesai?.toLocal().toString().split(' ')[0]}',
                                     style: TextStyle(
                                         color: Colors.grey, fontSize: 15)),
                                 Text(
@@ -291,7 +297,6 @@ class _HistoryPembelianState extends State<HistoryPembelian> {
                                 SizedBox(height: 5),
                                 SizedBox(
                                   width: 70,
-                                  height: 22,
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(

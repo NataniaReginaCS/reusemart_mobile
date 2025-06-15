@@ -10,14 +10,14 @@ class Barang {
   String foto;
   double berat;
   bool isGaransi;
-  DateTime akhir_garansi;
-  String status_perpanjangan;
+  DateTime? akhir_garansi;
+  bool status_perpanjangan;
   double harga;
-  DateTime tanggal_akhir;
-  DateTime batas_ambil;
+  DateTime? tanggal_akhir;
+  DateTime? batas_ambil;
   String status_barang;
-  DateTime tanggal_ambil;
-  DateTime tanggal_garansi;
+  DateTime? tanggal_ambil;
+  DateTime? tanggal_garansi;
   int durasi_penitipan;
 
   Barang({
@@ -59,26 +59,30 @@ class Barang {
                 : json["isGaransi"] == 1),
         akhir_garansi: (json["akhir_garansi"] == null ||
                 json["akhir_garansi"].toString().isEmpty)
-            ? DateTime.now()
+            ? null
             : DateTime.parse(json["akhir_garansi"].toString()),
-        status_perpanjangan: json["status_perpanjangan"]?.toString() ?? '',
+        status_perpanjangan: json["status_perpanjangan"] == null
+            ? false
+            : (json["status_perpanjangan"] is bool
+                ? json["status_perpanjangan"]
+                : json["status_perpanjangan"] == 1),
         harga: (json["harga"] ?? 0).toDouble(),
         tanggal_akhir: (json["tanggal_akhir"] == null ||
                 json["tanggal_akhir"].toString().isEmpty)
-            ? DateTime.now()
+            ? null
             : DateTime.parse(json["tanggal_akhir"].toString()),
         batas_ambil: (json["batas_ambil"] == null ||
                 json["batas_ambil"].toString().isEmpty)
-            ? DateTime.now()
+            ? null
             : DateTime.parse(json["batas_ambil"].toString()),
         status_barang: json["status_barang"]?.toString() ?? '',
         tanggal_ambil: (json["tanggal_ambil"] == null ||
                 json["tanggal_ambil"].toString().isEmpty)
-            ? DateTime.now()
+            ? null
             : DateTime.parse(json["tanggal_ambil"].toString()),
         tanggal_garansi: (json["tanggal_garansi"] == null ||
                 json["tanggal_garansi"].toString().isEmpty)
-            ? DateTime.now()
+            ? null
             : DateTime.parse(json["tanggal_garansi"].toString()),
         durasi_penitipan: json["durasi_penitipan"] ?? 0,
       );
