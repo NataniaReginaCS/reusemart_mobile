@@ -31,20 +31,20 @@ class Penitip {
   factory Penitip.fromRawJson(String str) => Penitip.fromJson(json.decode(str));
 
   factory Penitip.fromJson(Map<String, dynamic> json) => Penitip(
-        id_penitip: json["id_penitip"] ?? 0,
+        id_penitip: int.tryParse(json["id_penitip"].toString())  ?? 0,
         nama: json["nama"] ?? '',
         email: json["email"] ?? '',
         password: json["password"] ?? '',
         telepon: json["telepon"] ?? '',
-        wallet: (json["wallet"] ?? 0).toDouble(),
-        poin: json["poin"] ?? 0,
+        wallet: double.tryParse(json["wallet"].toString())  ?? 0,
+        poin: int.tryParse( json["poin"].toString()) ?? 0,
         foto_ktp: json["foto_ktp"] ?? '',
-        no_ktp: json["no_ktp"] ?? 0,
+        no_ktp:  int.parse(json["no_ktp"].toString()) ,
         badges: json["badges"] == null
             ? false
             : (json["badges"] is bool ? json["badges"] : json["badges"] == 1),
         total_rating: json["total_rating"] != null
-            ? (json["total_rating"] as num).toDouble()
+            ? double.tryParse(json["total_rating"].toString()) 
             : null,
       );
 

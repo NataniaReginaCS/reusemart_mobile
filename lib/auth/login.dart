@@ -93,7 +93,7 @@ class _LoginState extends State<Login> {
 
           await http
               .post(
-            Uri.parse('http://10.0.2.2:8000/api/update-fcm-token'),
+            Uri.parse('https://laravelkalvin.barioth.web.id/api/update-fcm-token'),
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer ${data['token']}',

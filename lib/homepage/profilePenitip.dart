@@ -28,7 +28,7 @@ class _ProfilePenitipState extends State<ProfilePenitip> {
       String? token = prefs.getString('token');
 
       await AuthClient.logout(token!);
-
+      await prefs.remove('role');
       await prefs.remove('token');
 
       Navigator.pushReplacement(

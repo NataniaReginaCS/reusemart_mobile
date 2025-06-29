@@ -22,12 +22,12 @@ class Pembeli {
   factory Pembeli.fromRawJson(String str) => Pembeli.fromJson(json.decode(str));
   factory Pembeli.fromJson(Map<String, dynamic> json) {
     return Pembeli(
-      id_pembeli: json["id_pembeli"],
+      id_pembeli: int.tryParse(json["id_pembeli"].toString()) ?? 0,
       nama: json["nama"],
       email: json["email"],
       password: json["password"],
       telepon: json["telepon"],
-      poin: json["poin"],
+      poin: int.tryParse(json["poin"].toString()) ?? 0,
       foto: json['foto'] != null && json['foto'].isNotEmpty
           ? 'http://10.0.2.2:8000/${json['foto']}'
           : '',

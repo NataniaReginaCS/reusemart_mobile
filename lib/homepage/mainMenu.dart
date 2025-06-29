@@ -4,12 +4,10 @@ import 'package:reusemart_mobile/History/Penitipan.dart';
 import 'package:reusemart_mobile/KurirPage/HistoryKurir.dart';
 import 'package:reusemart_mobile/KurirPage/ProfileKurir.dart';
 import 'package:reusemart_mobile/auth/login.dart';
-import 'package:reusemart_mobile/homepage/Merchandise.dart';
 import 'package:reusemart_mobile/homepage/home.dart';
 import 'package:reusemart_mobile/homepage/profilePembeli.dart';
 import 'package:reusemart_mobile/homepage/profilePenitip.dart';
 import 'package:reusemart_mobile/homepage/historyPPH.dart';
-import 'package:reusemart_mobile/HunterPage/ProfileHunter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Mainmenu extends StatefulWidget {
@@ -27,12 +25,23 @@ class _MainmenuState extends State<Mainmenu> {
   int? _id;
   String? _token;
   bool _isLoading = true;
+  void _cekToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null && token.isNotEmpty) {
+      print('Token ditemukan: $token');
+    } else {
+      print('Tidak ada token, user belum login atau sudah logout.');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedIndex;
     _loadRole();
+    _cekToken();
+    
   }
 
   void _onItemTapped(int index) {
@@ -58,10 +67,11 @@ class _MainmenuState extends State<Mainmenu> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
+    final bool isLoggedIn = _token != null && _token!.isNotEmpty;
 
     final List<Widget> _widgetOptions = <Widget>[
       HomePage(),
-      _token != null
+      isLoggedIn
           ? (_role == 'Pembeli'
               ? HistoryPembelian()
               : _role == 'Penitip'
@@ -72,7 +82,7 @@ class _MainmenuState extends State<Mainmenu> {
                           ? HistoryPPH()
                           : Login())
           : Login(),
-      _token != null
+      isLoggedIn
           ? (_role == 'Pembeli'
               ? ProfilePembeli()
               : _role == 'Penitip'
