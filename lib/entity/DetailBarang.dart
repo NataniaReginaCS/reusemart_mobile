@@ -23,7 +23,7 @@ class DetailBarang {
 
   factory DetailBarang.fromJson(Map<String, dynamic> json) {
     return DetailBarang(
-      idBarang: json['id_barang'],
+      idBarang: int.tryParse(json['id_barang'].toString()) ?? 0,
       nama: json['nama'] ?? '',
       deskripsi: json['deskripsi'] ?? '',
       foto: json["foto"]?.toString() ?? '',

@@ -8,7 +8,7 @@ import 'package:reusemart_mobile/entity/Pegawai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class KurirClient {
-  static final String url = 'http://10.0.2.2:8000/api';
+  static final String url = 'https://laravelkalvin.barioth.web.id/api';
 
   static Future<Pegawai> fetchCurrentKurir() async {
     try {

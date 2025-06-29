@@ -16,9 +16,9 @@ class Penitipan {
 
   factory Penitipan.fromJson(Map<String, dynamic> json) {
     return Penitipan(
-      id_penitipan: json['id_penitipan'] ?? 0,
-      id_penitip: json['id_penitip'] ?? 0,
-      id_pegawai: json['id_pegawai'] ?? 0,
+      id_penitipan: int.tryParse(json['id_penitipan'].toString())  ?? 0,
+      id_penitip: int.tryParse(json['id_penitip'].toString())  ?? 0,
+      id_pegawai: int.tryParse(json['id_pegawai'].toString())  ?? 0,
       tanggal_masuk: json['tanggal_masuk'] == null
           ? DateTime.now()
           : DateTime.parse(json['tanggal_masuk']),

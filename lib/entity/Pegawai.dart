@@ -25,8 +25,8 @@ class Pegawai {
   factory Pegawai.fromRawJson(String str) => Pegawai.fromJson(json.decode(str));
   factory Pegawai.fromJson(Map<String, dynamic> json) {
     return Pegawai(
-      id_pegawai: json["id_pegawai"] ?? 0,
-      id_role: json["id_role"] ?? 0,
+      id_pegawai: int.tryParse(json["id_pegawai"].toString())  ?? 0,
+      id_role: int.tryParse(json["id_role"].toString())  ?? 0,
       nama: json["nama"] ?? '',
       email: json["email"] ?? '',
       password: json["password"] ?? '',
@@ -36,9 +36,9 @@ class Pegawai {
       tanggal_lahir: json["tanggal_lahir"] != null
           ? DateTime.parse(json["tanggal_lahir"])
           : DateTime.now(),
-      wallet: json["wallet"] != null
-          ? double.tryParse(json["wallet"].toString())
-          : null,
+      wallet: double.tryParse(json["wallet"].toString())  != null
+          ? (double.tryParse(json["wallet"].toString()) ?? 0.0)
+          : 0.0,
     );
   }
 

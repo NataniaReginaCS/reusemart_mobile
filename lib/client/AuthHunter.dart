@@ -5,7 +5,7 @@ import 'package:reusemart_mobile/entity/Komisi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthHunter {
-  static final String url = 'http://10.0.2.2:8000/api';
+  static final String url = 'https://laravelkalvin.barioth.web.id/api';
   static final String endpoint = '';
 
   static Future<Pegawai> fetchHunter() async {

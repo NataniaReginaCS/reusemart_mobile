@@ -4,7 +4,7 @@ import 'package:reusemart_mobile/entity/Penitipan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthPenitipan {
-  static final String url = 'http://10.0.2.2:8000/api';
+  static final String url = 'https://laravelkalvin.barioth.web.id/api';
   static final String endpoint = '';
 
   static Future<List<Penitipan>> getPenitipan(int id) async {

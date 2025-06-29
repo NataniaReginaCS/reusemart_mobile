@@ -21,11 +21,11 @@ class Merchandise {
       Merchandise.fromJson(json.decode(str));
 
   factory Merchandise.fromJson(Map<String, dynamic> json) => Merchandise(
-        idMerchandise: json["id_merchandise"] ?? 0,
+        idMerchandise: int.tryParse(json["id_merchandise"].toString())  ?? 0,
         nama: json["nama_merchandise"]?.toString() ?? '',
         deskripsi: json["deskripsi"]?.toString() ?? '',
         foto: json["foto"]?.toString() ?? '',
-        poin: json["poin"] ?? 0,
-        stok: json["stok"] ?? 0,
+        poin: int.tryParse(json["poin"].toString())  ?? 0,
+        stok: int.tryParse(json["stok"].toString())  ?? 0,
       );
 }
