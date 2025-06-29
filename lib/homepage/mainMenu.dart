@@ -72,7 +72,6 @@ class _MainmenuState extends State<Mainmenu> {
                           ? HistoryPPH()
                           : Login())
           : Login(),
-
       _token != null
           ? (_role == 'Pembeli'
               ? ProfilePembeli()
@@ -118,7 +117,7 @@ class _MainmenuState extends State<Mainmenu> {
           unselectedItemColor: Color(0xFF8D92A3),
         ),
       ),
-      body: widgetOptions.elementAt(_selectedIndex),
+      body: _widgetOptions.elementAt(_selectedIndex),
     );
   }
 }

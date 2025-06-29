@@ -37,8 +37,8 @@ class Pegawai {
           ? DateTime.parse(json["tanggal_lahir"])
           : DateTime.now(),
       wallet: json["wallet"] != null
-          ? double.tryParse(json["wallet"].toString())
-          : null,
+          ? (double.tryParse(json["wallet"].toString()) ?? 0.0)
+          : 0.0,
     );
   }
 
