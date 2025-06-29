@@ -44,14 +44,14 @@ class Barang {
   factory Barang.fromRawJson(String str) => Barang.fromJson(json.decode(str));
 
   factory Barang.fromJson(Map<String, dynamic> json) => Barang(
-        id_barang: json["id_barang"] ?? 0,
-        id_penitipan: json["id_penitipan"] ?? 0,
+        id_barang: int.tryParse(json["id_barang"].toString())  ?? 0,
+        id_penitipan: int.tryParse(json["id_penitipan"].toString())  ?? 0,
         id_kategori: json["id_kategori"]?.toString() ?? '',
-        id_hunter: json["id_hunter"] ?? 0,
+        id_hunter: int.tryParse(json["id_hunter"].toString())   ?? 0,
         nama: json["nama"]?.toString() ?? '',
         deskripsi: json["deskripsi"]?.toString() ?? '',
         foto: json["foto"]?.toString() ?? '',
-        berat: (json["berat"] ?? 0).toDouble(),
+        berat: double.tryParse(json["berat"].toString()) ?? 0.0,
         isGaransi: json["isGaransi"] == null
             ? false
             : (json["isGaransi"] is bool
@@ -66,7 +66,7 @@ class Barang {
             : (json["status_perpanjangan"] is bool
                 ? json["status_perpanjangan"]
                 : json["status_perpanjangan"] == 1),
-        harga: (json["harga"] ?? 0).toDouble(),
+        harga: double.tryParse((json["harga"].toString())) ?? 0.0,
         tanggal_akhir: (json["tanggal_akhir"] == null ||
                 json["tanggal_akhir"].toString().isEmpty)
             ? null
@@ -84,6 +84,6 @@ class Barang {
                 json["tanggal_garansi"].toString().isEmpty)
             ? null
             : DateTime.parse(json["tanggal_garansi"].toString()),
-        durasi_penitipan: json["durasi_penitipan"] ?? 0,
+        durasi_penitipan: int.tryParse(json["durasi_penitipan"].toString()) ?? 0,
       );
 }

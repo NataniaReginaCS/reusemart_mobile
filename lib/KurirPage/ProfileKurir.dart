@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:reusemart_mobile/KurirPage/PengirimanKurir.dart';
 import 'package:reusemart_mobile/auth/login.dart';
 import 'package:reusemart_mobile/client/AuthClient.dart';
@@ -38,6 +39,7 @@ class _ProfileKurirState extends State<ProfileKurir> {
           SnackBar(content: Text("Terjadi kesalahan saat logout: $e")));
     }
   }
+
   late Future<Pegawai> _currentKurir;
 
   @override
@@ -86,7 +88,6 @@ class _ProfileKurirState extends State<ProfileKurir> {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        
                       ),
                       const SizedBox(
                           width: 16), // Tambahkan padding horizontal di sini
@@ -98,6 +99,12 @@ class _ProfileKurirState extends State<ProfileKurir> {
                               style: const TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
+                            // Text(
+                            //   DateFormat('EEEE, d MMMM y')
+                            //       .format(kurir.tanggal_lahir),
+                            //   style: const TextStyle(
+                            //       fontSize: 20, fontWeight: FontWeight.bold),
+                            // ),
                             Row(
                               children: [
                                 Icon(Icons.account_balance_wallet_rounded,

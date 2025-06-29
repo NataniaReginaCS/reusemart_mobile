@@ -43,10 +43,10 @@ class Pembelian {
       Pembelian.fromJson(json.decode(str));
   factory Pembelian.fromJson(Map<String, dynamic> json) {
     return Pembelian(
-      id_pembelian: json["id_pembelian"] ?? 0,
-      id_pegawai: json["id_pegawai"],
-      id_alamat: json["id_alamat"] ?? 0,
-      id_pembeli: json["id_pembeli"] ?? 0,
+      id_pembelian: int.tryParse(json["id_pembelian"].toString())  ?? 0,
+      id_pegawai: int.tryParse(json["id_pegawai"].toString()) ?? 0,
+      id_alamat: int.tryParse(json["id_alamat"].toString())  ?? 0,
+      id_pembeli: int.tryParse(json["id_pembeli"].toString()) ?? 0,
       tanggal_laku: json["tanggal_laku"] != null
           ? DateTime.parse(json["tanggal_laku"])
           : DateTime.now(),
@@ -56,18 +56,18 @@ class Pembelian {
       tanggal_pengiriman: json["tanggal_pengiriman"] != null
           ? DateTime.parse(json["tanggal_pengiriman"])
           : null,
-      ongkir: (json["ongkir"] ?? 0).toDouble(),
+      ongkir: double.tryParse((json["ongkir"] ?? 0).toString()) ?? 0.0,
       status_pengiriman: json["status_pengiriman"] ?? '',
       status_pembayaran: json["status_pembayaran"] ?? '',
       bukti_pembayaran: json['bukti_pembayaran'] != null &&
               json['bukti_pembayaran'].toString().isNotEmpty
-          ? 'http://10.0.2.2:8000/${json['bukti_pembayaran']}'
+          ? 'https://laravelkalvin.barioth.web.id/${json['bukti_pembayaran']}'
           : '',
-      poin_digunakan: json["poin_digunakan"] ?? 0,
-      poin_didapat: json["poin_didapat"] ?? 0,
+      poin_digunakan: int.tryParse(json["poin_digunakan"].toString())  ?? 0,
+      poin_didapat: int.tryParse(json["poin_didapat"].toString())  ?? 0,
       metode_pengiriman: json["metode_pengiriman"] ?? '',
-      total: (json["total"] ?? 0).toDouble(),
-      nomor_nota: json["nomor_nota"] ?? '',
+      total: double.tryParse(json["total"].toString()) ?? 0.0,
+      nomor_nota:  json["nomor_nota"] ?? '',
       tanggal_selesai: json["tanggal_selesai"] != null
           ? DateTime.parse(json["tanggal_selesai"])
           : null,

@@ -13,7 +13,7 @@ class DetailPembelian {
   });
   factory DetailPembelian.fromJson(Map<String, dynamic> json) {
     return DetailPembelian(
-      id_detail_pembelian: json['items']?[0]?['id_detail_pembelian'] ?? 0,
+      id_detail_pembelian: int.tryParse(json['items']?[0]?['id_detail_pembelian']?.toString() ?? '') ?? 0,
       pembelian: Pembelian.fromJson(json['pembelian'] ?? {}),
       barang: (json['items'] as List<dynamic>? ?? [])
           .map((e) => Barang.fromJson(e['barang'] as Map<String, dynamic>))

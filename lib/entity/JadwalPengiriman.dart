@@ -24,7 +24,7 @@ class JadwalPengiriman{
 
   factory JadwalPengiriman.fromJson(Map<String, dynamic> json) {
     return JadwalPengiriman(
-      id_pembelian: json["id_pembelian"],
+      id_pembelian: int.tryParse(json["id_pembelian"].toString()) ?? 0,
       tanggal_pengiriman: DateTime.parse(json["tanggal_pengiriman"]),
       status_pengiriman: json["status_pengiriman"],
       metode_pengiriman: json["metode_pengiriman"],
